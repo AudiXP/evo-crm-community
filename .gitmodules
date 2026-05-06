@@ -22,3 +22,6 @@
 [submodule "evo-bot-runtime"]
 	path = evo-bot-runtime
 	url = git@github.com:EvolutionAPI/evo-bot-runtime.git
+[submodule "evo-nexus"]
+	path = evo-nexus
+	url = git@github.com:EvolutionAPI/evo-nexus.git
