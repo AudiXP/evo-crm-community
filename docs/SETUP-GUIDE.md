@@ -67,7 +67,10 @@ talks to them directly):
 
 The frontend's `VITE_*` URLs in `.env.example` already point at these host
 ports — if they don't match, every API/WebSocket call fails with *connection
-refused* (see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)).
+refused* (see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)). The frontend image
+substitutes these into the built assets at **container start** (the entrypoint
+replaces `VITE_*_PLACEHOLDER` tokens), so changing one only needs
+`docker compose up -d --force-recreate evo-frontend` — no image rebuild.
 
 ### Database seeding
 
