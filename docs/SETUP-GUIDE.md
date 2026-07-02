@@ -29,7 +29,7 @@ There are exactly **two** supported ways to run the stack:
 ## Quick start (local development)
 
 ```bash
-git clone --recurse-submodules https://github.com/EvolutionAPI/evo-crm-community.git
+git clone --recurse-submodules https://github.com/evolution-foundation/evo-crm-community.git
 cd evo-crm-community
 cp .env.example .env        # defaults work out of the box — no edits needed
 make setup                  # builds images, starts infra, seeds the DB, boots everything

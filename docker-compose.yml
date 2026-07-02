@@ -392,11 +392,6 @@ services:
     build:
       context: ./evo-ai-frontend-community
       dockerfile: Dockerfile
-      args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:3010}
-        VITE_AUTH_API_URL: ${VITE_AUTH_API_URL:-http://localhost:3011}
-        VITE_EVOAI_API_URL: ${VITE_EVOAI_API_URL:-http://localhost:5565}
-        VITE_AGENT_PROCESSOR_URL: ${VITE_AGENT_PROCESSOR_URL:-http://localhost:8011}
     restart: unless-stopped
     environment:
       VITE_API_URL: ${VITE_API_URL:-http://localhost:3010}
