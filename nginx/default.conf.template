@@ -397,7 +397,9 @@ server {
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
-        client_max_body_size 10M;
+        # WhatsApp media chega base64 inline no webhook (Evolution) — 10M rejeitava
+        # documentos/PDF com 413. Alinha com o limite de 100M do resto do gateway (EVO-1966).
+        client_max_body_size 100M;
     }
 
     # =============================================================================
