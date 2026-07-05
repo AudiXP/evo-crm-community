@@ -47,7 +47,7 @@ git add db/schema.rb
 
 ## Recovery — historical collision `20260622120000`
 
-If you migrated **auth first** on a DB before this guard existed, `schema_migrations` will contain `20260622120000` while the CRM `messages.source` column is missing. Symptom: the CRM container crashloops at boot with `Undeclared attribute type for enum 'source'`.
+If you migrated **auth first** on a DB before this guard existed, `schema_migrations` will contain `20260622120000` while the CRM `messages.source` column is missing. Symptom: message operations fail with `PG::UndefinedColumn: column messages.source does not exist` — the container may boot fine and pass health checks (the image ships a build-time schema cache that masks the missing column until real SQL hits it). Setups without a schema cache instead crashloop at boot with `Undeclared attribute type for enum 'source'`.
 
 All commands run DB-side, from the deployment directory. Do NOT use `rails runner` inside the CRM container for this: in production it eager-loads the app, which loads the broken `Message` model and crashes with the very error you are trying to fix (`rails db:migrate` is safe — rake tasks skip eager loading). The `psql` client is always available in the `postgres` container.
 
