@@ -1,0 +1,28 @@
+name: Migration version collision guard
+
+# EVO-2090 (follow-up EVO-1911): evo-ai-crm-community e evo-auth-service-community
+# compartilham a mesma tabela `schema_migrations`. Uma version reusada entre os
+# dois faz o Rails pular a migration do serviço que rodou depois -> DDL/coluna
+# ausente -> boot quebra (ex.: messages.source). Este guard falha o CI se houver
+# qualquer timestamp de migration em comum entre os dois submódulos.
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  migration-collision:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (com submódulos)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Checar colisão de version de migration (CRM x auth)
+        run: bash .github/scripts/check-migration-version-collisions.sh
