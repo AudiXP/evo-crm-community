@@ -1,10 +1,15 @@
 name: Migration version collision guard
 
-# EVO-2090 (follow-up EVO-1911): evo-ai-crm-community e evo-auth-service-community
-# compartilham a mesma tabela `schema_migrations`. Uma version reusada entre os
-# dois faz o Rails pular a migration do serviço que rodou depois -> DDL/coluna
-# ausente -> boot quebra (ex.: messages.source). Este guard falha o CI se houver
-# qualquer timestamp de migration em comum entre os dois submódulos.
+# EVO-2090: evo-ai-crm-community e evo-auth-service-community compartilham UMA
+# tabela `schema_migrations` (mesmo banco). Uma version reusada faz o Rails pular
+# a migration do segundo app -> DDL ausente -> boot quebra (messages.source,
+# EVO-1911).
+#
+# A prevenção PRIMÁRIA vive no CI de CADA repo como regra de PARIDADE de version
+# (auth = ímpar, CRM = par -> espaços disjuntos, colisão impossível por
+# construção). Este guard do monorepo é o BACKSTOP (cinto-e-suspensório): falha se
+# os dois submódulos fixados compartilharem qualquer version (ex.: uma
+# grandfathered/pré-cutoff, ou se um check de paridade por-repo for burlado).
 
 on:
   pull_request:
@@ -23,6 +28,23 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Self-test do guard (fixtures)
+        run: |
+          set -euo pipefail
+          guard=.github/scripts/check-migration-version-collisions.sh
+          tmp="$(mktemp -d)"; mkdir -p "$tmp/crm" "$tmp/auth"
+          # (1) sem version compartilhada -> DEVE passar (exit 0)
+          : > "$tmp/crm/20200101000000_a.rb"
+          : > "$tmp/auth/20200101000001_b.rb"
+          bash "$guard" "$tmp/crm" "$tmp/auth"
+          # (2) version compartilhada -> DEVE falhar (exit 1)
+          : > "$tmp/auth/20200101000000_c.rb"
+          if bash "$guard" "$tmp/crm" "$tmp/auth"; then
+            echo "::error::self-test FALHOU — o guard não detectou a colisão injetada"
+            exit 1
+          fi
+          echo "self-test OK: passa em input limpo e falha na colisão"
 
       - name: Checar colisão de version de migration (CRM x auth)
         run: bash .github/scripts/check-migration-version-collisions.sh

@@ -1,0 +1,2 @@
+# EVO-2090: shell scripts sempre LF (CI roda em Linux; evita CRLF de commits Windows)
+*.sh text eol=lf
