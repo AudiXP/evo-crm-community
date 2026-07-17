@@ -29,6 +29,7 @@ en el MISMO `registerPlugin` del core `@/plugin-host`.
 | `10-analisis-odoo-perfex-mf.md` | Sintesis de `06-analisis-perfex-modulos.md` y `07-analisis-odoo-modulos.md` aplicada al modelo MF. |
 | `11-preguntas-respuestas.md` | FAQ + ciclo completo de un plugin de tercero (paso a paso) + aspecto visual de `/admin/mis-modulos` + paso a paso de la allowlist firmada en el pipeline de deploy (P11) + propuesta de marketplace mediado por microservicio (P12). |
 | `12-diseno-ui-admin-modulos.md` | Diseño formal de la UI `/admin/mis-modulos` (enfoque MF): layout, tarjeta, mock visual, comportamiento v1/v2. |
+| `13-deploy-mf.md` | Deploy en producción (Docker Swarm): host se builda igual que la referencia; remotos como builds independientes + allowlist firmada entregada al contenedor; pin Swarm = versión de remote. |
 
 ## Como leer
 

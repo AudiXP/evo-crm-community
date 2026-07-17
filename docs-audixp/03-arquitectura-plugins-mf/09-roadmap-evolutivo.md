@@ -48,3 +48,70 @@ Leyenda: [ ] pendiente - [~] parcial - [x] hecho
 - Toggle persistente de remotos contra microservicio (v2): `POST /api/v1/modules/:id/toggle`,
   propagacion WS/SSE + polling 30s, `missing_deps` SI bloquea activacion.
 - Slots nuevos oficiales (`chat.*`) para desmontar el acoplamiento en el composer.
+
+---
+
+## Criterios de terminado por fase (Definition of Done)
+
+Cada fase se considera completa solo si cumple TODOS sus criterios. Esto convierte
+este roadmap en el plan de implementacion ejecutable (no solo hoja de ruta).
+
+### F0 — Dependencias y decisiones
+- [ ] `@module-federation/vite` instalado; `npm install` y `npm run build` pasan.
+- [ ] Se documenta la decision: MF para terceros/desacoplados; quién firma (clave
+      AudiXP o partner); allowlist via config build-time o endpoint firmado.
+- **DoD:** el submodulo builda con el plugin MF presente (aunque aun no exponga remotos).
+
+### F1 — Host MF
+- [ ] `vite.config.ts` tiene `moduleFederation` con `shared` singleton para
+      `react`, `react-dom`, `react-router-dom`, `@evoapi/design-system`.
+- [ ] `manifest-schema.ts` rechaza `SlotId` fuera de la lista real y valida version
+      semantica del contrato (estado `incompatible_core_version`).
+- [ ] `remote-loader.ts` implementa los 6 requisitos de `remote-loader.md` y desemboca
+      en `registerPlugin`.
+- [ ] Integridad end-to-end (entry + chunks) y orden topologico por `dependsOn`
+      (ver `06-guia-modulos-plugin-host-mf.md` §2.5).
+- **DoD:** `npm run lint` + `npm run build` en verde; un test carga un remote mock
+      firmado y aparece en `getRegisteredPlugins()`.
+
+### F2 — Allowlist firmada
+- [ ] Existe mecanismo de entrega (config o endpoint) y el host NO carga ningun
+      remote sin allowlist valida + firma + SRI.
+- **DoD:** con allowlist vacia, cero remotos cargados; con entrada firmada valida,
+      el remote carga; con firma/SRI alterados, el remote se rechaza (test).
+
+### F3 — Remote ejemplo
+- [ ] Remote de prueba con `header.right` + 1 ruta `customer`, firmado.
+- [ ] Ciclo end-to-end verificado (carga -> `registerPlugin` -> slot/ruta visibles).
+- [ ] Crash del remote aislado por `PluginErrorBoundary` (shell no cae).
+- **DoD:** demo manual en `npm run dev` + test de aislamiento.
+
+### F4 — Pagina admin MF
+- [ ] `/admin/mis-modulos` lista in-tree Y remotos con badge origen, estado de firma,
+      URL/version y grafo `dependsOn` (`ok`/`missing_deps`).
+- **DoD:** UI con `@evoapi/design-system`, acceso por `requiredRole: ACCOUNT_OWNER`,
+      sin clases `bg-zinc-*`.
+
+### F5 — Caso real (Registrar Pago)
+- [ ] `RegistrarPagoExtension` migrado a remote MF; `MessageInput.tsx` ya no lo edita
+      manualmente.
+- **DoD:** el boton funciona como remote; build en verde; comportamiento igual a hoy.
+
+### F6 — Documentacion y deploy
+- [ ] Esta carpeta MF completa y `00-INDICE.md` actualizado.
+- [ ] Pin Swarm = version de remote en allowlist (no `main` flotante).
+- **DoD:** commit en `feature/arquitectura-plugins-mf` (submodulo) + push + pin del
+      submodulo actualizado en el monorepo padre.
+
+---
+
+## Resumen ejecutivo F0 (arranque inmediato en el submodulo)
+
+1. `cd evo-ai-frontend-community` -> `git checkout -b feature/arquitectura-plugins-mf`
+   (nace de `main` local estable).
+2. Agregar `@module-federation/vite` a devDependencies; `npm install`.
+3. `vite.config.ts`: plugin `moduleFederation`, `remotes: {}`, `shared` singleton.
+4. `src/plugin-host/manifest-schema.ts` + `remote-loader.ts` (implementa
+   `remote-loader.md`).
+5. `npm run lint` + `npm run build` en verde.
+6. Commit en la rama del submodulo + push a `origin/AudiXP` + actualizar pin en padre.

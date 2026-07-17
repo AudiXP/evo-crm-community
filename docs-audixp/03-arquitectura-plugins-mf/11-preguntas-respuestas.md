@@ -292,6 +292,34 @@ Ver `12-diseno-ui-admin-modulos.md` (pestañas) y `09-roadmap-evolutivo.md` (v2)
 
 ---
 
+## P13. ¿Cómo mantenemos nuestro enfoque MF cuando el upstream oficial (evolution-foundation) actualiza evo-crm-community o evo-ai-frontend-community?
+
+Una vez completado el Roadmap MF, el upstream oficial (`github.com/evolution-foundation/evo-crm-community` y su submódulo `evo-ai-frontend-community`) seguirá recibiendo cambios. La arquitectura MF está diseñada para **aislarse** de esos cambios, pero hay un flujo de sincronización.
+
+### Por qué MF facilita esto (vs in-tree)
+- El modelo in-tree sufre porque los plugins viven **dentro** de `src/extensions/` del fork: cualquier cambio upstream choca con tus archivos y fuerza merges.
+- Con MF (modelo híbrido): lo propio puede seguir in-tree (poco y estable), pero los remotos de terceros/desacoplados viven **fuera del repo del host**. El único contacto con el core es `vite.config.ts` (plugin MF aditivo) + la línea de import en `main.tsx`. MF se agrega sin tocar el core.
+- El contrato (`PluginManifest`, `SlotId`) es estable; los remotos consumen tipos, no parchan el core.
+
+### Flujo de sincronización con upstream
+1. **Sync del host (submódulo):** en `evo-ai-frontend-community`, `git fetch upstream` y merge/rebase de `upstream/main` a tu `main` local (nunca desde ramas de trabajo ni `upstream/main` en vivo; ver `00-estrategia-ramas-mf.md`). Resuelves conflictos solo en los **2 puntos de contacto** (vite.config + main.tsx). MF es plugin aditivo → bajo riesgo.
+2. **Verificar compatibilidad del contrato:** si upstream cambia `@/plugin-host/types.ts` (nuevos `SlotId` o `PluginManifest`), eso es un **bump de versión del contrato**. `validatePluginManifest` ya rechaza remotos incompatibles con estado `incompatible_core_version` (ver `08-retos-y-soluciones.md` §1 y `11` P12).
+3. **Rebuild + redeploy del host** usando `13-deploy-mf.md`. Los remotos **no se rebuildan** salvo que el contrato cambie de versión mayor.
+4. **Remotos:** si el contrato NO cambió, siguen funcionando (solo cambió el host). Si el contrato cambió de versión mayor, cada tercero recompila su remote contra la nueva versión y actualiza su entrada en la allowlist firmada (nueva firma/SRI).
+5. **Allowlist firmada:** rotarla solo si cambió algún remote; el host no se toca.
+
+### Qué SÍ puede romper
+- **Bump mayor de React/Vite** en upstream → los `shared` singleton deben coincidir; remotos viejos pueden romper (por eso el contrato fija rango del design-system y versión de React).
+- **Cambio en `@/plugin-host` (tipos)** → requiere bump de contrato y rebuild de remotos.
+- **Cambio en `vite.config.ts`** del upstream → fusionar con tu plugin MF (conflicto puntual, acotado).
+
+### Regla de pin (Swarm)
+El pin del submódulo host debe ser un commit validado y estable, no `main` flotante. Al sincronizar upstream, mueves el pin solo tras validar build + allowlist. La "versión" de cada remote vive en la allowlist firmada, no en el pin del host.
+
+Ver `00-estrategia-ramas-mf.md` §3 (Sincronización con upstream oficial) y `09-roadmap-evolutivo.md` (fases).
+
+---
+
 ## Relación con las fases
 
 Arrancar por la rama puente **`feature/arquitectura-plugins-mf`** (ver
