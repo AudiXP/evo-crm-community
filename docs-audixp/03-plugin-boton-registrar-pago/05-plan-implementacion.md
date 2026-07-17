@@ -14,9 +14,9 @@ Leyenda de estado: [ ] pendiente - [~] parcial - [x] hecho
 
 ## Fase 0 - Preparacion (rama y fork)
 
-- [ ] 0.1 Entrar al submodulo real: `cd C:\evo-crm-community\evo-ai-frontend-community`
-- [ ] 0.2 Confirmar remotes: `git remote -v` (origin=AudiXP, upstream=oficial)
-- [ ] 0.3 Crear rama: `git checkout -b feature/plugin-boton-registrar-pago`
+- [x] 0.1 Entrar al submodulo real: `cd C:\evo-crm-community\evo-ai-frontend-community`
+- [x] 0.2 Confirmar remotes: `git remote -v` (origin=AudiXP, upstream=oficial) - OK
+- [ ] 0.3 Crear rama definitiva: `git checkout -b feature/plugin-boton-registrar-pago` (nace desde feature/arquitectura-plugins, NO desde feature/registrar-pago)
 - [x] 0.4 Mecanismo de placeholders `VITE_TEUSA_TRACK_*` (Dockerfile + docker-entrypoint.sh) ya existe en el fork (Enfoque A)
 
 ---
