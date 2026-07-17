@@ -3,7 +3,7 @@
 **Repositorio:** `evolution-foundation/evo-crm-community` (monorepo con submodulos)
 **Submodulo frontend:** `evo-ai-frontend-community`
 **Fork AudiXP:** `https://github.com/AudiXP/evo-ai-frontend-community.git`
-**Rama sugerida:** `feature/registrar-pago-plugin`
+**Rama sugerida:** `feature/plugin-boton-registrar-pago`
 **Enfoque:** B (plugin registrado en `@/plugin-host`), a diferencia de `01-registrar-pago/`
 donde el boton se monta manualmente en `MessageInput.tsx`.
 
@@ -32,7 +32,7 @@ evo-ai-frontend-community/
 ├── src/
 │   ├── vite-env.d.ts                       <- Tipado VITE_TEUSA_TRACK_* (editado, igual que A)
 │   ├── main.tsx                            <- UNICO archivo oficial modificado (1 linea import)
-│   └── extensions/registrar-pago/          <- Tu plugin aislado (nunca tocado por upstream)
+│   └── extensions/boton-registrar-pago/          <- Tu plugin aislado (nunca tocado por upstream)
 │       ├── index.ts                        <- registerPlugin(RegistrarPagoManifest)
 │       ├── manifest.ts                     <- PluginManifest (slots, guard)
 │       ├── RegistrarPagoExtension.tsx      <- Boton + modal + envio FormData a Teusa Track
@@ -48,7 +48,7 @@ evo-ai-frontend-community/
 ## 3. El Manifest (registro en el host)
 
 ```ts
-// src/extensions/registrar-pago/manifest.ts
+// src/extensions/boton-registrar-pago/manifest.ts
 import type { PluginManifest } from '@/plugin-host';
 import { RegistrarPagoExtension } from './RegistrarPagoExtension';
 
@@ -86,7 +86,7 @@ chat oficial. Esto es una limitacion del core, no del plugin.
 ## 4. El Entry Point
 
 ```ts
-// src/extensions/registrar-pago/index.ts
+// src/extensions/boton-registrar-pago/index.ts
 import { registerPlugin } from '@/plugin-host';
 import { RegistrarPagoManifest } from './manifest';
 
@@ -103,7 +103,7 @@ registerPlugin(RegistrarPagoManifest);
 
 ```ts
 // src/main.tsx (al inicio del archivo, antes de createRoot)
-import '@/extensions/registrar-pago';   // registra el plugin antes del mount del router
+import '@/extensions/boton-registrar-pago';   // registra el plugin antes del mount del router
 import { createRoot } from 'react-dom/client';
 // ... resto igual
 ```

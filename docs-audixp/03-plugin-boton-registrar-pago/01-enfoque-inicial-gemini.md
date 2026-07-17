@@ -16,19 +16,19 @@ Aqui las tres mejores estrategias, ordenadas de la mas recomendada a la mas trad
 ## 1. La Estrategia Ideal: Plugin Plug-and-Play (registro en el host)
 
 En lugar de "meter mano" en el codigo core de las conversaciones, creas tus componentes como
-un plugin totalmente independiente en `src/extensions/registrar-pago/` y lo **registras** en
+un plugin totalmente independiente en `src/extensions/boton-registrar-pago/` y lo **registras** en
 el host de plugins mediante `registerPlugin()` (contrato `@/plugin-host`). El host se encarga
 de renderizarlo en el slot correspondiente (`header.right` hoy; `chat.*` cuando exista) y de
 aislarlo con `PluginErrorBoundary`.
 
-* **Paso A:** Creas la carpeta aislada `src/extensions/registrar-pago/` con `index.ts`
+* **Paso A:** Creas la carpeta aislada `src/extensions/boton-registrar-pago/` con `index.ts`
   (entry point que llama `registerPlugin(manifest)`), `manifest.ts`, el modal y la extension.
 * **Paso B:** El UNICO punto de contacto con el codigo oficial es **una linea de import** al
   inicio de `src/main.tsx` (antes de `createRoot`):
 
 ```ts
 // src/main.tsx (inicio del archivo)
-import '@/extensions/registrar-pago';   // registra el plugin antes del mount del router
+import '@/extensions/boton-registrar-pago';   // registra el plugin antes del mount del router
 import { createRoot } from 'react-dom/client';
 ```
 
@@ -48,7 +48,7 @@ Practica estandar de la industria para open-source:
 ```bash
 git remote add upstream https://github.com/evolution-foundation/evo-ai-frontend-community.git
 ```
-3. Crea una rama especifica para tus cambios (p. ej. `feature/registrar-pago-plugin`) y
+3. Crea una rama especifica para tus cambios (p. ej. `feature/plugin-registrar-pago`) y
    trabaja ahi.
 4. Para actualizarte con el creador:
 ```bash
@@ -76,8 +76,8 @@ micro-aplicacion consumida desde una URL externa en runtime. No se toca el codig
 
 Combinacion de **Estrategia 2 (Fork + Rama)** + **Estrategia 1 (plugin en /extensions)**:
 
-- Fork `AudiXP/evo-ai-frontend-community`, rama `feature/registrar-pago-plugin`, `upstream` oficial.
-- Todo el codigo propio en `src/extensions/registrar-pago/` (carpeta que upstream no conoce).
+- Fork `AudiXP/evo-ai-frontend-community`, rama `feature/plugin-registrar-pago`, `upstream` oficial.
+- Todo el codigo propio en `src/extensions/boton-registrar-pago/` (carpeta que upstream no conoce).
 - Unico punto de contacto con el codigo oficial: `src/main.tsx`, **1 linea de import**
   (el plugin se registra a si mismo via `registerPlugin`). El composer NO se edita.
 

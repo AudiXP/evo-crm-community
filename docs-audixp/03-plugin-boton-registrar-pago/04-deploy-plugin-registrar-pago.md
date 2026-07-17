@@ -20,15 +20,15 @@ El `Dockerfile` compila el `dist` con **placeholders** en las variables `VITE_*`
 `VITE_TEUSA_TRACK_API_URL_PLACEHOLDER`). Al arrancar el contenedor, `docker-entrypoint.sh`
 hace `sed` para reemplazarlos por los valores del `environment:` del stack.
 
-En el Enfoque B, el plugin se registra en `src/main.tsx` (`import '@/extensions/registrar-pago'`)
+En el Enfoque B, el plugin se registra en `src/main.tsx` (`import '@/extensions/boton-registrar-pago'`)
 y su `index.ts` llama `registerPlugin`. El build de la imagen incluye ese codigo; no hay
 diferencia en el mecanismo de placeholders respecto al Enfoque A.
 
 Archivos modificados en el fork (iguales a Enfoque A):
 - `Dockerfile` -> `ENV VITE_TEUSA_TRACK_API_URL=..._PLACEHOLDER` (+ token)
 - `docker-entrypoint.sh` -> dos lineas `sed` nuevas
-- `src/extensions/registrar-pago/*` -> plugin completo (modal, extension, manifest, index)
-- `src/main.tsx` -> 1 linea `import '@/extensions/registrar-pago'`
+- `src/extensions/boton-registrar-pago/*` -> plugin completo (modal, extension, manifest, index)
+- `src/main.tsx` -> 1 linea `import '@/extensions/boton-registrar-pago'`
 - `src/vite-env.d.ts` -> tipado de ambas variables
 
 ---
@@ -48,11 +48,11 @@ cd C:\evo-crm-community\evo-ai-frontend-community
 
 docker build `
   --build-arg APP_VERSION=registrar-pago-plugin `
-  -t evoapicloud/evo-ai-frontend-community:audixp-registrar-pago-plugin `
+  -t evoapicloud/evo-ai-frontend-community:audixp-plugin-boton-registrar-pago `
   .
 ```
 
-> Usa un tag propio (`audixp-registrar-pago-plugin`) para no pisar la imagen oficial ni la
+> Usa un tag propio (`audixp-plugin-boton-registrar-pago`) para no pisar la imagen oficial ni la
 > del Enfoque A. No pasamos URLs en el build: quedan como placeholders y se resuelven en
 > runtime.
 
@@ -70,7 +70,7 @@ docker images | Select-String "evo-ai-frontend-community"
 ## 4. Paso 2 - Exportar a .tar
 
 ```powershell
-docker save evoapicloud/evo-ai-frontend-community:audixp-registrar-pago-plugin `
+docker save evoapicloud/evo-ai-frontend-community:audixp-plugin-boton-registrar-pago `
   -o C:\evo-crm-community\frontend-audixp-plugin.tar
 ```
 
@@ -102,7 +102,7 @@ En `evocrm_frontend` del stack: cambia la imagen a tu tag plugin y agrega las va
 
 ```yaml
   evocrm_frontend:
-    image: evoapicloud/evo-ai-frontend-community:audixp-registrar-pago-plugin
+    image: evoapicloud/evo-ai-frontend-community:audixp-plugin-boton-registrar-pago
     networks:
       - evonet
       - red_megachatapp
@@ -173,7 +173,7 @@ VITE_TEUSA_TRACK_API_TOKEN: "el-token-real"
 
 | | Enfoque A (01-registrar-pago) | Enfoque B (este doc) |
 |---|---|---|
-| Tag imagen | `audixp-registrar-pago` | `audixp-registrar-pago-plugin` |
+| Tag imagen | `audixp-registrar-pago` | `audixp-plugin-boton-registrar-pago` |
 | Archivo .tar | `frontend-audixp.tar` | `frontend-audixp-plugin.tar` |
 | Boton vive en | composer (`MessageInput.tsx`) | slot `header.right` del plugin |
 | Aislamiento | manual | `PluginErrorBoundary` automatico |
