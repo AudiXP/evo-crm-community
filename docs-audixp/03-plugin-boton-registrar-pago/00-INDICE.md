@@ -15,6 +15,7 @@ No depende de las carpetas 01/02: cada archivo aqui es una copia adaptada y comp
 | `02-guia-modulos-plugin-host.md` | Contrato real `@/plugin-host` (copia autocontenida y corregida: sin Rails, SlotId reales, runtimeContext unico). |
 | `03-guia-plugin-registrar-pago.md` | ⭐ Como implementar el boton Registrar Pago COMO PLUGIN: manifest, slot, entry point, y diferencias vs Enfoque A. |
 | `04-deploy-plugin-registrar-pago.md` | Deploy de la imagen con el plugin ya registrado (build -> FTP -> docker load -> stack Swarm con VITE_TEUSA_TRACK_*). |
+| `05-plan-implementacion.md` | ⭐ Plan por fases (0-5) con checklist para migrar del Enfoque A al Enfoque B: preparacion, investigacion en el core, creacion del plugin, punto de contacto, validacion y deploy. |
 
 ## Como leer
 
@@ -22,6 +23,7 @@ No depende de las carpetas 01/02: cada archivo aqui es una copia adaptada y comp
 2. `02-guia-modulos-plugin-host.md` (el contrato que usaremos).
 3. `03-guia-plugin-registrar-pago.md` (la implementacion del boton como plugin).
 4. `04-deploy-plugin-registrar-pago.md` (como llevarlo a produccion).
+5. `05-plan-implementacion.md` (checklist de ejecucion por fases).
 
 ## Relacion con otras carpetas
 
