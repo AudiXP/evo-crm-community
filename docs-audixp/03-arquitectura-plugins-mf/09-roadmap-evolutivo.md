@@ -1,4 +1,4 @@
-# 09 — Roadmap Evolutivo de Module Federation
+﻿# 09 — Roadmap Evolutivo de Module Federation
 
 Plan por fases para adoptar MF en `evo-ai-frontend-community`, partiendo del modelo
 in-tree existente. Es la reorientacion de `05-plan-implementacion` al enfoque MF.
@@ -6,21 +6,21 @@ in-tree existente. Es la reorientacion de `05-plan-implementacion` al enfoque MF
 Leyenda: [ ] pendiente - [~] parcial - [x] hecho
 
 ## Fase 0 — Dependencias y decisiones
-- [ ] 0.1 Agregar `@module-federation/vite` a devDependencies del host.
-- [ ] 0.2 Confirmar compatibilidad con Vite 6 (y React 19).
-- [ ] 0.3 Cerrar preguntas abiertas del diagnostico: ¿MF solo terceros o tambien
+- [x] 0.1 Agregar `@module-federation/vite` a devDependencies del host.
+- [x] 0.2 Confirmar compatibilidad con Vite 6 (y React 19).
+- [x] 0.3 Cerradas: MF para terceros/desacoplados; firma por clave AudiXP (operador); allowlist via config build-time (VITE_MF_ALLOWLIST) o endpoint firmado.
       internos desacoplados? ¿quien firma? ¿allowlist de config o endpoint?
 
 ## Fase 1 — Host MF
-- [ ] 1.1 `vite.config.ts` host con `moduleFederation` + `shared` singleton
+- [x] 1.1 vite.config.ts host con federation + `shared` singleton
       (react/react-dom/react-router-dom/@evoapi/design-system).
-- [ ] 1.2 Mantener `import '@/extensions';` para lo propio (hibrido).
-- [ ] 1.3 `manifest-schema.ts`: `validatePluginManifest` contra `SlotId` reales y tipos.
-- [ ] 1.4 `remote-loader.ts`: `registerRemotePlugin` (allowlist + firma + SRI + schema).
+- [x] 1.2 Mantener `import '@/extensions';` para lo propio (hibrido).
+- [x] 1.3 manifest-schema.ts: `validatePluginManifest` contra `SlotId` reales y tipos.
+- [x] 1.4 remote-loader.ts: `registerRemotePlugin` (allowlist + firma + SRI + schema).
 
 ## Fase 2 — Allowlist firmada
-- [ ] 2.1 Mecanismo de entrega de la allowlist (config build-time o endpoint firmado).
-- [ ] 2.2 Sin allowlist valida, MF no se habilita (feature-flag de seguridad).
+- [x] 2.1 Mecanismo de entrega de la allowlist (config build-time VITE_MF_ALLOWLIST o endpoint firmado).
+- [x] 2.2 Sin allowlist valida, MF no se habilita (feature-flag de seguridad).
 
 ## Fase 3 — Remote ejemplo
 - [ ] 3.1 Crear remote de prueba (`header.right` + 1 ruta `customer`) con firma.

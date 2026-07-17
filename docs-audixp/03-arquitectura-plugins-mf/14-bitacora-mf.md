@@ -36,7 +36,8 @@ en commit posterior de `main` del padre (push a `origin/main`).
 
 - **Fase 0 (Dependencias y decisiones): COMPLETA** - @module-federation/vite instalado; npm install/tsc -b/vite build en verde; decisiones de firmante/allowlist documentadas.
 - **Fase 1 (Host MF): COMPLETA** - vive en el commit d9b0abf (F0 y F1 fueron un solo commit porque son infra conjunta del host). Cumple F1.1-F1.4 + integridad end-to-end + orden topologico dependsOn.
-- **Fase 2 en adelante: PENDIENTE** (ver abajo).
+- **Fase 2 (Allowlist firmada): COMPLETA** - verifySignedAllowlist / loadSignedAllowlist / bootstrapRemoteLoader; medio de entrega VITE_MF_ALLOWLIST (config o endpoint); feature-flag: cero remotos sin allowlist valida + firma.
+- **Fase 3 en adelante: PENDIENTE** (ver abajo).
 
 ## Decisiones de implementación (F0 + F1)
 
@@ -73,8 +74,8 @@ en commit posterior de `main` del padre (push a `origin/main`).
 
 ## Pendiente (Fase 2 en adelante, no hecha aún)
 
-- F2: mecanismo de entrega de la allowlist firmada (config build-time / endpoint)
-  + keyring host-controlled.
+- F3: remote ejemplo (header.right + 1 ruta customer) firmado, ciclo
+  end-to-end, aislamiento PluginErrorBoundary.
 - F3: remote ejemplo (`header.right` + 1 ruta `customer`) firmado, ciclo
   end-to-end, aislamiento `PluginErrorBoundary`.
 - F4: `/admin/mis-modulos` con badge origen/firma/`dependsOn`.
@@ -90,3 +91,16 @@ git log --oneline -3 feature/arquitectura-plugins-mf
 git merge-base feature/arquitectura-plugins-mf upstream/main   # -> c8bc64e
 git log c8bc64e --oneline -1
 ```
+
+## Resumen F2 — Allowlist firmada
+
+- `remote-loader.ts`: nuevas funciones `verifySignedAllowlist` (valida la firma del
+  documento allowlist con la clave del operador del keyring), `loadSignedAllowlist`
+  (medio de entrega: JSON inline / endpoint URL; si falta o firma invalida ->
+  allowlist vacia) y `bootstrapRemoteLoader` (lee `import.meta.env.VITE_MF_ALLOWLIST`,
+  verifica y activa; fallo -> cero remotos). Cumple F2 DoD: allowlist vacia = 0 remotos;
+  firma/SRI alterados = rechazo.
+- `PluginHostProvider`: ahora `await bootstrapRemoteLoader()` antes de
+  `registerAllRemotePlugins()` en el useEffect temprano.
+- `index.ts`: exporta `bootstrapRemoteLoader`, `loadSignedAllowlist`, `verifySignedAllowlist`.
+- Verificado: lint 0 errores, `tsc -b` exit 0, `vite build` OK.
