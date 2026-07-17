@@ -35,6 +35,7 @@ Esta carpeta agrupa la documentacion de las personalizaciones de AudiXP sobre
 | `04-diff-rama-vs-main.md` | Diff verificado `feature/arquitectura-plugins` vs `main` (2 archivos, +13 lineas) + infra que ya trae el oficial. |
 | `05-plan-implementacion.md` | Plan por fases (0-5) para completar la rama puente: barril, pagina admin de modulos, validacion, deploy. |
 | `06-analisis-perfex-modulos.md` | Analisis del sistema de modulos de Perfex CRM y que patrones son aplicables/no aplicables a nuestro `@/plugin-host` (metadatos, helpers, UI de listado, RBAC; NO la carga .zip en runtime). |
+| `07-analisis-odoo-modulos.md` | Analisis del sistema de modulos de Odoo 19 (manifest rico, grafo de dependencias, ORM, assets/OWL) y que aplica a `@/plugin-host` (convencion `meta`, validacion de dependencias entre plugins) + sintesis Perfex/Odoo/Evo. |
 
 ## 03-plugin-boton-registrar-pago/  (Enfoque B - caso concreto autocontenido)
 
