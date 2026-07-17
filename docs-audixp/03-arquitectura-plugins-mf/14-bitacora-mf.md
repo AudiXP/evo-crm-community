@@ -1,4 +1,4 @@
-# 14 — Bitácora de Implementación Module Federation (AudiXP)
+﻿# 14 — Bitácora de Implementación Module Federation (AudiXP)
 
 Registro cronológico de lo ejecutado en la arquitectura de plugins MF, con origen
 de cada commit, decisiones y autores. El "qué/cuándo/quién" vive en `git log`;
@@ -32,7 +32,13 @@ este archivo registra el *porqué* y el linaje de la rama.
 Monorepo padre (`evo-crm-community`): el pin del submódulo se movió a `d9b0abf`
 en commit posterior de `main` del padre (push a `origin/main`).
 
-## Decisiones de implementación (F0/F1)
+## Estado de fases
+
+- **Fase 0 (Dependencias y decisiones): COMPLETA** - @module-federation/vite instalado; npm install/tsc -b/vite build en verde; decisiones de firmante/allowlist documentadas.
+- **Fase 1 (Host MF): COMPLETA** - vive en el commit d9b0abf (F0 y F1 fueron un solo commit porque son infra conjunta del host). Cumple F1.1-F1.4 + integridad end-to-end + orden topologico dependsOn.
+- **Fase 2 en adelante: PENDIENTE** (ver abajo).
+
+## Decisiones de implementación (F0 + F1)
 
 1. **`@module-federation/vite` realidad vs documentación.** La doc
    (`03-configuracion-vite-mf.md`) asume `moduleFederation`, pero la versión
@@ -65,7 +71,7 @@ en commit posterior de `main` del padre (push a `origin/main`).
 - `vite build`: `✓ built` (host con plugin federation; `remoteEntry` generado).
 - `npm install`: `@module-federation/vite@1.18.2` resuelto.
 
-## Pendiente (Fases siguientes, no hechas aún)
+## Pendiente (Fase 2 en adelante, no hecha aún)
 
 - F2: mecanismo de entrega de la allowlist firmada (config build-time / endpoint)
   + keyring host-controlled.
