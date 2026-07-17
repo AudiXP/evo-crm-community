@@ -16,6 +16,7 @@ Es la base sobre la que se construye `03-plugin-boton-registrar-pago` (caso conc
 | `02-guia-modulos-v3-original.md` | Referencia historica: version v3.1.0 original (asume `@evoai/extension-points` y Rails; CON ERRORES vs repo real). Solo para comparar. |
 | `04-diff-rama-vs-main.md` | Diff verificado de `feature/arquitectura-plugins` vs `main` (2 archivos, +13 lineas) + infraestructura que ya trae el oficial. |
 | `05-plan-implementacion.md` | Plan por fases (0-5) para completar la rama puente: barril, investigacion en core, pagina admin de modulos, validacion, commit/push, nota de deploy. |
+| `06-analisis-perfex-modulos.md` | Analisis del sistema de modulos de Perfex CRM (instalacion real en `C:\wamp64\www\crmrodama`): ciclo de vida, hooks, installer .zip, UI de gestion, y que patrones son aplicables/no aplicables a `@/plugin-host` con recomendaciones. |
 
 ## Como leer
 
