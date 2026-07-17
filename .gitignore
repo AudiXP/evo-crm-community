@@ -17,3 +17,4 @@ evo-assistant/
 
 # Imagen Docker exportada para deploy por FTP (no versionar binarios)
 frontend-audixp.tar
+frontend-audixp-plugin.tar
