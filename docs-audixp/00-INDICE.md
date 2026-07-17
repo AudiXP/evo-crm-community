@@ -23,12 +23,17 @@ Esta carpeta agrupa la documentacion de las personalizaciones de AudiXP sobre
 | `02-deploy-registrar-pago.md` | Deploy Docker: build local -> exportar .tar -> FTP -> importar en nodo -> stack Swarm con `VITE_TEUSA_TRACK_*`. |
 | `03-auditoria-registrar-pago.md` | Auditoria de problemas corregidos (archivos fuera de submodulo, falta de punto de contacto, estetica del modal). |
 
-## 02-arquitectura-plugins/  (Enfoque B - objetivo)
+## 02-arquitectura-plugins/  (Enfoque B - teoria + rama puente feature/arquitectura-plugins)
 
 | Archivo | Contenido |
 |---|---|
+| `00-INDICE.md` | Indice local de la carpeta. |
+| `00-estrategia-ramas.md` | Politica de ramas Git (nacer de `main` oficial, flujo de ramas, pin Swarm). |
+| `01-gestion-de-modulos.md` | Analisis Odoo/Perfex (no existe pagina de instalacion) + modelo code-time + slots admin montados + diseno de la pagina admin como plugin (solo-lectura). |
 | `01-guia-modulos-plugin-host.md` | **Fuente de verdad.** Guia de modulos/plugins corregida al repo real (`@/plugin-host`, sin Rails, `SlotId` reales, `runtimeContext` unico). |
 | `02-guia-modulos-v3-original.md` | Referencia: version original v3.1.0 (asume `@evoai/extension-points` y Rails; CON ERRORES vs repo real). Solo para comparar. |
+| `04-diff-rama-vs-main.md` | Diff verificado `feature/arquitectura-plugins` vs `main` (2 archivos, +13 lineas) + infra que ya trae el oficial. |
+| `05-plan-implementacion.md` | Plan por fases (0-5) para completar la rama puente: barril, pagina admin de modulos, validacion, deploy. |
 
 ## 03-plugin-boton-registrar-pago/  (Enfoque B - caso concreto autocontenido)
 
@@ -55,7 +60,9 @@ Proyecto documental del boton Registrar Pago construido COMO PLUGIN (`@/plugin-h
 
 ## Notas de mantenimiento
 
-- El `.gitignore` de la raiz ignora `frontend-audixp.tar` (imagen Docker exportada).
+- El `.gitignore` de la raiz ignora `frontend-audixp.tar` y `frontend-audixp-plugin.tar` (imagenes Docker exportadas).
 - Los commits de esta carpeta se hacen en el monorepo `AudiXP/evo-crm-community` (rama `main`).
-- El codigo de las extensiones vive en el submodulo `evo-ai-frontend-community`
-  (rama `feature/registrar-pago`, fork `AudiXP`).
+- El codigo de las extensiones vive en el submodulo `evo-ai-frontend-community` (fork `AudiXP`).
+  - Enfoque A en produccion: rama `feature/registrar-pago`.
+  - Rama puente de infraestructura: `feature/arquitectura-plugins` (barril + pagina admin).
+  - Enfoque B del boton (futuro): `feature/plugin-boton-registrar-pago` (nace de la rama puente).
