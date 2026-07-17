@@ -105,6 +105,32 @@ este roadmap en el plan de implementacion ejecutable (no solo hoja de ruta).
 
 ---
 
+## Fase 7 — Sonda de actualizaciones upstream (plugin AudiXP)
+
+Objetivo: conocer desde la UI admin cuándo el oficial (`evolution-foundation`) se
+actualizó, y qué versión del host/contrato está desplegada. Ver `00-estrategia-ramas-mf.md`
+§3.1/§3.2 y `11-preguntas-respuestas.md` P13.
+
+- [ ] 7.1 El host expone **build metadata** (commit SHA, tag/version, `evoCommunityRange`
+      del contrato) vía `runtimeContext` del remote "core" o endpoint liviano del backend.
+- [ ] 7.2 La página `/admin/mis-modulos` (o panel "Acerca de") muestra
+      "Host: vX.Y.Z (sha abc123) · Contrato: 1.x" y la versión de cada remote.
+- [ ] 7.3 **Plugin de sonda** (in-tree AudiXP, no remoto de tercero): consulta el SHA/
+      version del upstream oficial de forma segura:
+      - Opción A (backend): un microservicio hace `git ls-remote upstream` (o GitHub API/
+        webhook) y expone `upstreamSha` al frontend; el plugin compara con el SHA del host
+        desplegado y marca "Actualización disponible".
+      - Opción B (frontend, limitado): el plugin consulta la GitHub API de commits/releases
+        del repo oficial (CORS/rate-limit aplican; requiere proxy o token). No consulta
+        Docker Hub (el build es local).
+- [ ] 7.4 Al detectar diferencia, la UI muestra badge "Actualización disponible" y enlace
+      a la guía de sincronización (`00-estrategia-ramas-mf.md` §3). No aplica ni descarga
+      nada automáticamente (la sincronización es manual/CI por seguridad).
+- **DoD:** un admin ve en `/admin/mis-modulos` la versión del host desplegado y un aviso
+      cuando el SHA del upstream difiere del pin local.
+
+---
+
 ## Resumen ejecutivo F0 (arranque inmediato en el submodulo)
 
 1. `cd evo-ai-frontend-community` -> `git checkout -b feature/arquitectura-plugins-mf`

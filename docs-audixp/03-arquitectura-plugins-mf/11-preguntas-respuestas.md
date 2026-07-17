@@ -316,7 +316,22 @@ Una vez completado el Roadmap MF, el upstream oficial (`github.com/evolution-fou
 ### Regla de pin (Swarm)
 El pin del submódulo host debe ser un commit validado y estable, no `main` flotante. Al sincronizar upstream, mueves el pin solo tras validar build + allowlist. La "versión" de cada remote vive en la allowlist firmada, no en el pin del host.
 
-Ver `00-estrategia-ramas-mf.md` §3 (Sincronización con upstream oficial) y `09-roadmap-evolutivo.md` (fases).
+### ¿Cómo sé que el oficial se actualizó? (detección)
+Docker Hub **no** es sonda (el build es local). La fuente es el repo `evolution-foundation`:
+`git fetch upstream` + `git log HEAD..upstream/main` (manual), `git ls-remote --tags
+upstream` (versiones), un job/cron que compara el SHA del upstream con el **pin de tu
+submódulo**, o webhooks de GitHub `push` (automático). Cuando el SHA difiere del pin,
+hay novedades. Ver `00-estrategia-ramas-mf.md` §3.1.
+
+### ¿Cómo ver la versión desplegada desde la UI admin?
+El host expone su build metadata (commit SHA, tag/version, `evoCommunityRange` del
+contrato) vía `runtimeContext` del remote "core" o endpoint liviano; la página admin
+lo muestra ("Host: vX.Y.Z (sha) · Contrato: 1.x"). Los remotos muestran su `meta.version`
+y la versión del `remoteEntry.js` de la allowlist. Esto habilita el **plugin de sonda
+de actualizaciones** (F7 en `09-roadmap-evolutivo.md`) que marca "Actualización
+disponible" al comparar el SHA desplegado con el del upstream. Ver `00-estrategia-ramas-mf.md` §3.2.
+
+Ver `00-estrategia-ramas-mf.md` §3 (Sincronización + detección + versión en UI) y `09-roadmap-evolutivo.md` (fases, F7).
 
 ---
 

@@ -87,3 +87,39 @@ se actualizan, el enfoque MF ya está aislado. Flujo de mantenimiento:
 Riesgos que SÍ requieren acción: bump mayor de React/Vite (los `shared` singleton deben
 coincidir), cambio en `@/plugin-host` (bump de contrato + rebuild de remotos), y cambio
 en `vite.config.ts` del upstream (fusionar con el plugin MF). Ver `11-preguntas-respuestas.md` P13.
+
+### 3.1 Detección de actualizaciones upstream (¿cuándo hay novedades?)
+
+El build de la imagen es **local** (no se baja de Docker Hub del oficial), así que
+**Docker Hub NO sirve como sonda** de código. La fuente de verdad es el repo de
+`evolution-foundation`. Mecanismos:
+
+- **Check manual (git):** en el submódulo, `git fetch upstream` y comparar:
+  `git log HEAD..upstream/main --oneline` lista los commits nuevos del oficial.
+- **Versiones estables:** `git ls-remote --tags upstream` (o GitHub API de releases)
+  para detectar tags/nuevas versiones en vez de seguir `main` flotante.
+- **Sonda automática:** un job CI/CD o cron que hace `git ls-remote upstream` y compara
+  el SHA HEAD con el **pin de tu submódulo** (`evo-ai-frontend-community` en `main` del
+  padre). Si difiere -> alerta (Slack/email) o PR automático de sync.
+- **Webhooks de GitHub:** suscribirse al evento `push` del repo oficial para recibir
+  notificación en vivo (sin polling).
+
+Cuando el SHA del oficial difiere del pin de tu submódulo, hay novedades upstream.
+Con MF esto importa menos: mientras el **contrato** (`@/plugin-host/types.ts`) no cambie
+de versión mayor, un update del host no rompe tus remotos.
+
+### 3.2 Conocer la versión desplegada desde la UI admin
+
+Para ver desde `/admin/mis-modulos` (o un panel de "Acerca de") qué versión del host
+y del contrato está corriendo:
+
+- El host expone su **build metadata** (commit SHA, tag/version, `evoCommunityRange`
+  del contrato) vía un `runtimeContext` del remote "core" o un endpoint liviano del
+  backend. La página admin lo muestra como "Host: vX.Y.Z (sha abc123) · Contrato: 1.x".
+- Los **remotos** ya muestran su `version` (de `meta`) y la versión del `remoteEntry.js`
+  en la allowlist (ver `12-diseno-ui-admin-modulos.md`).
+- Esto habilita el **plugin de sonda de actualizaciones** (ver `09-roadmap-evolutivo.md`
+  F7): compara el SHA/version del host desplegado contra el SHA del upstream y marca
+  "Actualización disponible" en la UI.
+
+Ver `11-preguntas-respuestas.md` P13 y `09-roadmap-evolutivo.md` (F7, plugin de sonda).
