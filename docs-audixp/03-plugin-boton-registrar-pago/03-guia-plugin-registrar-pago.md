@@ -163,6 +163,7 @@ export const RegistrarPagoExtension = (_props: PluginSlotComponentProps) => {
       const response = await fetch(TEUSA_TRACK_ENDPOINT as string, { method: 'POST', headers, body: formData });
       if (!response.ok) throw new Error(`Error Teusa Track (${response.status})`);
       toast.success('Pago registrado exitosamente en Teusa Track!');
+      setIsOpen(false);
     } catch (error) {
       console.error(error);
       toast.error('Hubo un error al procesar el pago.');
@@ -196,6 +197,20 @@ con los valores del `environment:` del stack Swarm.
 ---
 
 ## 8. Diferencias respecto al Enfoque A (recapitulacion)
+
+Tabla extendida (dimensiones tecnicas), util para decidir la migracion:
+
+| Dimensión Técnica | Enfoque A (01-registrar-pago) | Enfoque B (este doc) |
+|---|---|---|
+| **Punto de Inyección** | Manual en el composer (`MessageInput.tsx`) | Slot oficial `header.right` (verificado en `Header.tsx` líneas 220, 276) |
+| **Impacto al Core** | Modifica componentes internos del chat | Cero modificaciones en el chat; solo 1 línea de import en `src/main.tsx` |
+| **Aislamiento de Fallos** | Inexistente: un crash del modal puede colgar la vista de chat | Alto: el host envuelve la contribución en `PluginErrorBoundary` automático |
+| **Manejo de Contexto** | Pasa `conversationId` por props directas del chat | Lee del store de la conversación activa o `usePluginRuntimeContext()` (ver Pendientes) |
+| **Seguridad de Tokens** | Inyectados en el stack Swarm (`VITE_TEUSA_TRACK_*`) | Pueden seguir en Swarm o delegarse a endpoints proxy de los microservicios |
+| **Activación dinámica** | No (siempre visible) | Posible vía `guard` + `runtimeContext` |
+| **Riesgo de conflicto al rebase** | `MessageInput.tsx` | `main.tsx` (1 línea) |
+
+Resumen corto:
 
 | Aspecto | Enfoque A (01-registrar-pago) | Enfoque B (este doc) |
 |---|---|---|
