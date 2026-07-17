@@ -30,8 +30,8 @@ Leyenda de estado: [ ] pendiente - [~] parcial - [x] hecho
       (`getRegisteredPlugins`, `getPlugins`, `getSlotContributions`, `getRoutes`, `subscribe`).
 - [x] 1.2 Confirmar que `PluginRoutes({ namespace:'admin' })` esta MONTADO (`routes/index.tsx:1534`).
 - [x] 1.3 Confirmar que `admin.nav` / `settings.sections` / `dashboard.widgets` NO estan montados.
-- [ ] 1.4 Confirmar rol real disponible para `requiredRole` (que valor usa el core para "account_owner").
-- [ ] 1.5 Confirmar como se resuelve el guard cuando el plugin NO define `guard` (deny-by-default con requiredRole).
+- [x] 1.4 Confirmar rol real disponible para `requiredRole`: `constants/roles.ts` -> `ROLE_KEYS.ACCOUNT_OWNER = 'account_owner'` (tambien super_admin/administrator/agent; `isAdminRole()`).
+- [x] 1.5 Confirmar guard sin `guard` definido: `guards.ts` deny-by-default -> con `requiredRole` presente y CERO guards, DENIEGA. El plugin admin DEBE registrar su propio `guard`.
 
 ---
 
@@ -39,13 +39,15 @@ Leyenda de estado: [ ] pendiente - [~] parcial - [x] hecho
 
 > Construccion posterior a la documentacion (decision: documentar y despues construir).
 
-- [ ] 2.1 Crear `src/extensions/admin-modulos/manifest.ts` (ruta `/admin/mis-modulos`, `namespace:'admin'`, `requiredRole:'account_owner'`).
-- [ ] 2.2 Crear `src/extensions/admin-modulos/pages/AdminModulosPage.tsx`
-      (lee `getRegisteredPlugins()`, se suscribe con `subscribe()`; solo lectura).
-- [ ] 2.3 UI con `@evoapi/design-system` (NO clases `bg-zinc-*`). Mostrar por plugin: id, slots, rutas, navItems.
-- [ ] 2.4 Crear `src/extensions/admin-modulos/index.ts` (`registerPlugin(AdminModulosManifest)`).
-- [ ] 2.5 Descomentar/registrar en barril: `import './admin-modulos';`.
-- [ ] 2.6 (Opcional/futuro) resolver acceso al menu: `admin.nav` NO montado -> acceso por URL, o parche del shell.
+- [ ] 2.1 Crear `src/extensions/_shared/types.ts` con `AudixpModuleMeta` (name, version, author, license?, category? string libre, summary?, description?, application?, dependsOn?). NO duplica `id`.
+- [ ] 2.2 Crear `src/extensions/admin-modulos/manifest.ts` (ruta `/admin/mis-modulos`, `namespace:'admin'`, `requiredRole: ROLE_KEYS.ACCOUNT_OWNER` + `guard` OBLIGATORIO por deny-by-default).
+- [ ] 2.3 Crear `src/extensions/admin-modulos/pages/AdminModulosPage.tsx`
+      (lee `getRegisteredPlugins()`, se suscribe con `subscribe()`; solo lectura; agrupa por `meta.category`; badge `ok`/`missing_deps` por `dependsOn`).
+- [ ] 2.4 (Opcional) helper `registerAudixpPlugin({ meta, manifest })` en `_shared/` que una meta + `registerPlugin` + i18n.
+- [ ] 2.5 UI con `@evoapi/design-system` (NO clases `bg-zinc-*`). Mostrar por plugin: meta, slots, rutas, estado dependsOn.
+- [ ] 2.6 Crear `src/extensions/admin-modulos/index.ts` (`registerPlugin(AdminModulosManifest)`).
+- [ ] 2.7 Registrar en barril: `import './admin-modulos';`.
+- [ ] 2.8 (Opcional/futuro) resolver acceso al menu: `admin.nav` NO montado -> acceso por URL, o link estatico en el shell.
 
 ---
 
