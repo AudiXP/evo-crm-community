@@ -18,6 +18,8 @@ Es la base sobre la que se construye `03-plugin-boton-registrar-pago` (caso conc
 | `05-plan-implementacion.md` | Plan por fases (0-5) para completar la rama puente: barril, investigacion en core, pagina admin de modulos, validacion, commit/push, nota de deploy. |
 | `06-analisis-perfex-modulos.md` | Analisis del sistema de modulos de Perfex CRM (instalacion real en `C:\wamp64\www\crmrodama`): ciclo de vida, hooks, installer .zip, UI de gestion, y que patrones son aplicables/no aplicables a `@/plugin-host` con recomendaciones. |
 | `07-analisis-odoo-modulos.md` | Analisis del sistema de modulos de Odoo 19 (instalacion real en `C:\1-odoo-19.0`): manifest rico, grafo de dependencias, ORM/migraciones, hooks de ciclo de vida, assets/OWL, y que patrones aplican a `@/plugin-host` (manifest `meta`, validacion de dependencias) + sintesis comparativa Perfex/Odoo/Evo. |
+| `08-diagnostico-module-federation.md` | Diagnostico de investigacion: estado actual (in-tree, sin MF), que es Module Federation, veredicto de encaje en Evo CRM, fricciones vs el contrato `@/plugin-host`, preguntas abiertas. |
+| `08-module-federation.md` | Diseno de adopcion de Module Federation como segunda via de registro (hibrido con in-tree): topologia, config host/remote, `RemotePluginLoader` que implementa `remote-loader.md`, resolucion de fricciones, fases y restricciones duras. |
 
 ## Como leer
 
@@ -26,6 +28,8 @@ Es la base sobre la que se construye `03-plugin-boton-registrar-pago` (caso conc
 3. `01-gestion-de-modulos.md` (que se puede administrar hoy y diseno de la pagina admin).
 4. `04-diff-rama-vs-main.md` (que cambio exactamente la rama puente).
 5. `05-plan-implementacion.md` (checklist de ejecucion por fases).
+6. `08-diagnostico-module-federation.md` (investigacion y veredicto sobre MF).
+7. `08-module-federation.md` (diseno de MF como via hibrida de plugins remotos).
 
 ## Relacion con otras carpetas
 
