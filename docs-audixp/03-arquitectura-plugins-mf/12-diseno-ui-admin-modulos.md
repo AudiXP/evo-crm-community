@@ -1,4 +1,4 @@
-# 12 — Diseño UI: /admin/mis-modulos (enfoque MF)
+﻿# 12 — Diseño UI: /admin/mis-modulos (enfoque MF)
 
 Documentacion formal del diseno visual de la pagina de gestion de modulos en el
 enfoque Module Federation. Complementa `05-gestion-de-modulos-mf.md` §9 y
@@ -26,6 +26,14 @@ enfoque Module Federation. Complementa `05-gestion-de-modulos-mf.md` §9 y
 ├──────────────────────────────────────────────────────────┤
 │ <tarjeta por plugin, agrupadas por meta.category>        │
 └──────────────────────────────────────────────────────────┘
+```
+
+> meta.category es un campo opcional de PluginManifestMeta en manifest-schema.ts.
+> La UI agrupa las tarjetas por category; los plugins sin category caen en el grupo 'Sin categoria'.
+> Es un cambio de contrato MENOR y retrocompatible: no requiere bump mayor ni afecta
+> validatePluginManifest porque no se valida como SlotId. Los remotos lo declaran en su meta
+> build-time, y el host propagationa category a getPluginRegistrationMeta. Ejemplo: la pagina
+> admin propia usa category Administracion; el remote de ejemplo usa category Ejemplo.
 ```
 
 ## 3. Tarjeta de módulo
@@ -69,6 +77,14 @@ Campos por tarjeta:
 │ [Listo]  header.right                                 │
 │ [remote] [firmado] cdn.tercerox.com/remoteEntry.js        │
 └──────────────────────────────────────────────────────────┘
+```
+
+> meta.category es un campo opcional de PluginManifestMeta en manifest-schema.ts.
+> La UI agrupa las tarjetas por category; los plugins sin category caen en el grupo 'Sin categoria'.
+> Es un cambio de contrato MENOR y retrocompatible: no requiere bump mayor ni afecta
+> validatePluginManifest porque no se valida como SlotId. Los remotos lo declaran en su meta
+> build-time, y el host propagationa category a getPluginRegistrationMeta. Ejemplo: la pagina
+> admin propia usa category Administracion; el remote de ejemplo usa category Ejemplo.
 ```
 
 ## 5. Comportamiento por fase

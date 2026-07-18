@@ -28,9 +28,9 @@ Leyenda: [ ] pendiente - [~] parcial - [x] hecho
 - [x] 3.3 Aislamiento por PluginErrorBoundary ya garantizado en el render de cada contribucion (contrato @/plugin-host); crash del remote no tumba el shell.
 
 ## Fase 4 — Pagina admin MF
-- [ ] 4.1 `/admin/mis-modulos` lista in-tree Y remotos.
-- [ ] 4.2 Badge origen (`in-tree` vs `remote`) + estado de firma + URL/version.
-- [ ] 4.3 Grafo `dependsOn` con badge `ok` / `missing_deps`.
+- [x] 4.1 /admin/mis-modulos lista in-tree y remotos (fuente getRegisteredPlugins + getPluginRegistrationMeta).
+- [x] 4.2 Badge origen (in-tree/remote) + estado de firma (firmado/firma-invalida) + URL/version + tags slots/rutas.
+- [x] 4.3 Grafo dependsOn: badge Requiere <ids> cuando faltan deps (missing_deps).
 
 ## Fase 5 — Caso real (Registrar Pago)
 - [ ] 5.1 Migrar `RegistrarPagoExtension` a remote MF (caso `07-casos-de-uso-crm.md`).
@@ -87,7 +87,7 @@ este roadmap en el plan de implementacion ejecutable (no solo hoja de ruta).
 - **DoD:** demo manual en `npm run dev` + test de aislamiento.
 
 ### F4 — Pagina admin MF
-- [ ] `/admin/mis-modulos` lista in-tree Y remotos con badge origen, estado de firma,
+- [x] /admin/mis-modulos lista in-tree y remotos con badge origen, estado de firma,
       URL/version y grafo `dependsOn` (`ok`/`missing_deps`).
 - **DoD:** UI con `@evoapi/design-system`, acceso por `requiredRole: ACCOUNT_OWNER`,
       sin clases `bg-zinc-*`.

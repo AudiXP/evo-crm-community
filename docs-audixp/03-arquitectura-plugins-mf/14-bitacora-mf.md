@@ -39,7 +39,8 @@ en commit posterior de `main` del padre (push a `origin/main`).
 - **Fase 1 (Host MF): COMPLETA** - vive en el commit d9b0abf (F0 y F1 fueron un solo commit porque son infra conjunta del host). Cumple F1.1-F1.4 + integridad end-to-end + orden topologico dependsOn.
 - **Fase 2 (Allowlist firmada): COMPLETA** - verifySignedAllowlist / loadSignedAllowlist / bootstrapRemoteLoader; medio de entrega VITE_MF_ALLOWLIST (config o endpoint); feature-flag: cero remotos sin allowlist valida + firma.
 - **Fase 3 (Remote ejemplo): COMPLETA** - remote de ejemplo en remotes/evo-plugin-ejemplo (header.right + ruta customer), firmado (SRI + allowlist firmada), script de firma (sign-mf-allowlist.mjs) y demo dev (dev-mf.mjs). Test de seguridad 8/8 (firma/SRI alterados -> rechazo).
-- **Fase 4 en adelante: PENDIENTE** (ver abajo).
+- **Fase 4 (Pagina admin MF): COMPLETA** - /admin/mis-modulos lista in-tree y remotos con badge origen/firma/url/version + grafo dependsOn; UI @evoapi/design-system; acceso ACCOUNT_OWNER; v1 solo lectura.
+- **Fase 5 en adelante: PENDIENTE** (ver abajo).
 
 ## Decisiones de implementación (F0 + F1)
 
@@ -76,7 +77,6 @@ en commit posterior de `main` del padre (push a `origin/main`).
 
 ## Pendiente (Fase 4 en adelante, no hecha aún)
 
-- F4: `/admin/mis-modulos` con badge origen/firma/`dependsOn`.
 - F5: migrar `RegistrarPagoExtension` a remote MF.
 - F6: deploy Docker Swarm + allowlist firmada al contenedor (`13-deploy-mf.md`).
 - F7: plugin de sonda de actualizaciones upstream.
@@ -126,3 +126,34 @@ git log c8bc64e --oneline -1
 - Verificado: lint 0 errores, tsc -b exit 0, vite build host OK, vitest 8/8.
 - Pendiente de verificacion visual en navegador (demo manual): slot/ruta visibles
   y aislamiento PluginErrorBoundary ante crash del remote.
+## Resumen F4 — Pagina admin MF (/admin/mis-modulos)
+
+- `src/plugin-host/registry.ts`: nuevo mapa `registrationMeta` + tipos
+  `PluginOrigin`/`PluginSignatureStatus`/`PluginRegistrationMeta`; `registerPlugin`
+  inicializa origen `in-tree`; `setPluginRegistrationMeta`/`getPluginRegistrationMeta`
+  exponen metadatos de auditoria. Exportado por `@/plugin-host`.
+- `src/plugin-host/remote-loader.ts`: tras `registerPlugin`, marca el plugin como
+  `origin: 'remote'` + `signatureStatus: 'signed'` + `remoteUrl` + `buildVersion`.
+- `src/pages/Admin/MisModulos/AdminModulesPage.tsx`: pagina v1 (solo lectura/auditoria)
+  que lee `getRegisteredPlugins()` + `subscribe()` + `getPluginRegistrationMeta(id)`;
+  stats (Total/Activos/Con problemas), buscador, tabs Todos/Activos/Inactivos, tarjeta
+  por plugin con badge estado/origen/firma, tags de slots y rutas, URL del remote y
+  grafo `dependsOn` (Requiere <ids>). UI con @evoapi/design-system, sin clases bg-zinc-*.
+- `src/extensions/index.ts` (barrel AudiXP): registra la ruta admin `mis-modulos`
+  via `registerPlugin` con `requiredRole: ROLE_KEYS.ACCOUNT_OWNER` + guard deny-by-default;
+  `main.tsx` importa `@/extensions` (unico punto de contacto aditivo con el core).
+  El host ya monta rutas `namespace:'admin'` via `PluginRoutes` (routes/index.tsx).
+- `src/plugin-host/__tests__/registry-meta.spec.ts`: 4 tests (origen in-tree por
+  defecto, remote+firma, fuente de verdad, set parcial).
+- Verificado: lint 0 errores, tsc -b exit 0, vite build OK, vitest 4/4.
+- v1: el toggle refleja el estado pero esta deshabilitado (no ejecuta codigo); el alta
+  de remotos sigue siendo configuracion del host (allowlist firmada), no accion UI.
+
+### Ajuste post-F4: campo meta.category (cambio de contrato MENOR)
+- Se anadio 'category?: string' a PluginManifestMeta (manifest-schema.ts) y a
+  PluginRegistrationMeta (registry.ts), propagado por remote-loader tras registerPlugin.
+- AdminModulesPage agrupa las tarjetas por category (fallback 'Sin categoria').
+- El barrel in-tree marca evo-admin-mis-modulos con category 'Administracion'; el remote
+  de ejemplo declara category 'Ejemplo' en su meta.
+- Retrocompatible: campo opcional, no afecta validatePluginManifest ni requiere bump mayor.
+- Documentado tambien en 12-diseno-ui-admin-modulos.md (esperado de UI).
