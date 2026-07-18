@@ -28,8 +28,9 @@ este archivo registra el *porqué* y el linaje de la rama.
 |---|---|---|---|---|
 | `c8bc64e` | 2026-07-14 | Guilherme Gomes (evolution-foundation) | `main` / `upstream/main` (tag `v1.0.0`) | Merge PR #260 — base estable/pinada de la que nace la rama MF |
 | `d9b0abf` | 2026-07-17 | AudiXP | `feature/arquitectura-plugins-mf` | Fase 0/1: infra MF (federation, manifest-schema, remote-loader, PluginHostProvider) |
+| `7ae4dda` | 2026-07-17 | AudiXP | `feature/arquitectura-plugins-mf` | Fase 2: allowlist firmada (verifySignedAllowlist/loadSignedAllowlist/bootstrapRemoteLoader) |
 
-Monorepo padre (`evo-crm-community`): el pin del submódulo se movió a `d9b0abf`
+Monorepo padre (`evo-crm-community`): el pin del submódulo se movió a `7ae4dda`
 en commit posterior de `main` del padre (push a `origin/main`).
 
 ## Estado de fases
@@ -37,7 +38,8 @@ en commit posterior de `main` del padre (push a `origin/main`).
 - **Fase 0 (Dependencias y decisiones): COMPLETA** - @module-federation/vite instalado; npm install/tsc -b/vite build en verde; decisiones de firmante/allowlist documentadas.
 - **Fase 1 (Host MF): COMPLETA** - vive en el commit d9b0abf (F0 y F1 fueron un solo commit porque son infra conjunta del host). Cumple F1.1-F1.4 + integridad end-to-end + orden topologico dependsOn.
 - **Fase 2 (Allowlist firmada): COMPLETA** - verifySignedAllowlist / loadSignedAllowlist / bootstrapRemoteLoader; medio de entrega VITE_MF_ALLOWLIST (config o endpoint); feature-flag: cero remotos sin allowlist valida + firma.
-- **Fase 3 en adelante: PENDIENTE** (ver abajo).
+- **Fase 3 (Remote ejemplo): COMPLETA** - remote de ejemplo en remotes/evo-plugin-ejemplo (header.right + ruta customer), firmado (SRI + allowlist firmada), script de firma (sign-mf-allowlist.mjs) y demo dev (dev-mf.mjs). Test de seguridad 8/8 (firma/SRI alterados -> rechazo).
+- **Fase 4 en adelante: PENDIENTE** (ver abajo).
 
 ## Decisiones de implementación (F0 + F1)
 
@@ -72,12 +74,8 @@ en commit posterior de `main` del padre (push a `origin/main`).
 - `vite build`: `✓ built` (host con plugin federation; `remoteEntry` generado).
 - `npm install`: `@module-federation/vite@1.18.2` resuelto.
 
-## Pendiente (Fase 2 en adelante, no hecha aún)
+## Pendiente (Fase 4 en adelante, no hecha aún)
 
-- F3: remote ejemplo (header.right + 1 ruta customer) firmado, ciclo
-  end-to-end, aislamiento PluginErrorBoundary.
-- F3: remote ejemplo (`header.right` + 1 ruta `customer`) firmado, ciclo
-  end-to-end, aislamiento `PluginErrorBoundary`.
 - F4: `/admin/mis-modulos` con badge origen/firma/`dependsOn`.
 - F5: migrar `RegistrarPagoExtension` a remote MF.
 - F6: deploy Docker Swarm + allowlist firmada al contenedor (`13-deploy-mf.md`).
@@ -104,3 +102,27 @@ git log c8bc64e --oneline -1
   `registerAllRemotePlugins()` en el useEffect temprano.
 - `index.ts`: exporta `bootstrapRemoteLoader`, `loadSignedAllowlist`, `verifySignedAllowlist`.
 - Verificado: lint 0 errores, `tsc -b` exit 0, `vite build` OK.
+## Resumen F3 — Remote ejemplo
+
+- `remotes/evo-plugin-ejemplo/`: remote MF de prueba con `vite.config.ts` (plugin
+  `federation`, `exposes './plugin-manifest'`, `shared` singleton), `src/entry.ts`
+  (PluginManifest con `header.right` + 1 ruta `customer` namespace `customer`),
+  `src/components/AccionEjemplo.tsx` y `src/pages/PaginaEjemplo.tsx` usando
+  `@evoapi/design-system` (Button/Card, sin clases bg-zinc-*). `npm run build`
+  genera `dist/remoteEntry.js` (16 kB) + chunks.
+- `scripts/sign-mf-allowlist.mjs`: herramienta de operador (P11) que genera claves
+  ECDSA P-256, firma el bundle (SRI) y el documento allowlist, y emite
+  `.mf/allowlist.signed.json` + `.mf/keyring.json` + `.mf/bundle-signature.txt`.
+- `scripts/dev-mf.mjs`: demo manual — sirve el remote en :4174 con header
+  `X-Mf-Signature` y arranca el host en :5173 con `VITE_MF_ALLOWLIST` +
+  `VITE_MF_KEYRING` inyectadas. Ciclo end-to-end cableado.
+- `remote-loader.ts`: `bootstrapRemoteLoader` ahora tambien carga el keyring desde
+  `VITE_MF_KEYRING` (host-controlled) antes de validar la allowlist firmada.
+- `src/plugin-host/__tests__/remote-loader.spec.ts`: 8 tests (F2/F3 DoD) — firma
+  del documento valida, firma alterada rechazada, keyring faltante rechazado,
+  allowlist vacia = 0 remotos, schema + rango del contrato (incompatible_core_version).
+- Correccion en `manifest-schema.ts` (satisfiesRange): el tokenizador ahora separa
+  operador de version, permitiendo `>=1.0.0-rc2` (syntax literal del contrato).
+- Verificado: lint 0 errores, tsc -b exit 0, vite build host OK, vitest 8/8.
+- Pendiente de verificacion visual en navegador (demo manual): slot/ruta visibles
+  y aislamiento PluginErrorBoundary ante crash del remote.

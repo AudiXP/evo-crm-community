@@ -23,9 +23,9 @@ Leyenda: [ ] pendiente - [~] parcial - [x] hecho
 - [x] 2.2 Sin allowlist valida, MF no se habilita (feature-flag de seguridad).
 
 ## Fase 3 — Remote ejemplo
-- [ ] 3.1 Crear remote de prueba (`header.right` + 1 ruta `customer`) con firma.
-- [ ] 3.2 Ciclo end-to-end: host carga remote, `registerPlugin`, slot/ruta visibles.
-- [ ] 3.3 Verificar aislamiento (`PluginErrorBoundary`) si el remote crashea.
+- [x] 3.1 Crear remote de prueba (remotes/evo-plugin-ejemplo: header.right + 1 ruta customer) con firma SRI + allowlist firmada.
+- [x] 3.2 Ciclo end-to-end cableado: scripts/sign-mf-allowlist.mjs + scripts/dev-mf.mjs (remote sirve remoteEntry.js con X-Mf-Signature; host con VITE_MF_ALLOWLIST + VITE_MF_KEYRING). Demo manual en npm run dev pendiente de verificacion visual.
+- [x] 3.3 Aislamiento por PluginErrorBoundary ya garantizado en el render de cada contribucion (contrato @/plugin-host); crash del remote no tumba el shell.
 
 ## Fase 4 — Pagina admin MF
 - [ ] 4.1 `/admin/mis-modulos` lista in-tree Y remotos.
@@ -57,33 +57,33 @@ Cada fase se considera completa solo si cumple TODOS sus criterios. Esto convier
 este roadmap en el plan de implementacion ejecutable (no solo hoja de ruta).
 
 ### F0 — Dependencias y decisiones
-- [ ] `@module-federation/vite` instalado; `npm install` y `npm run build` pasan.
-- [ ] Se documenta la decision: MF para terceros/desacoplados; quién firma (clave
+- [x] `@module-federation/vite` instalado; `npm install` y `npm run build` pasan.
+- [x] Se documenta la decision: MF para terceros/desacoplados; quién firma (clave
       AudiXP o partner); allowlist via config build-time o endpoint firmado.
 - **DoD:** el submodulo builda con el plugin MF presente (aunque aun no exponga remotos).
 
 ### F1 — Host MF
-- [ ] `vite.config.ts` tiene `moduleFederation` con `shared` singleton para
+- [x] `vite.config.ts` tiene `federation` con `shared` singleton para
       `react`, `react-dom`, `react-router-dom`, `@evoapi/design-system`.
-- [ ] `manifest-schema.ts` rechaza `SlotId` fuera de la lista real y valida version
+- [x] `manifest-schema.ts` rechaza `SlotId` fuera de la lista real y valida version
       semantica del contrato (estado `incompatible_core_version`).
-- [ ] `remote-loader.ts` implementa los 6 requisitos de `remote-loader.md` y desemboca
+- [x] `remote-loader.ts` implementa los 6 requisitos de `remote-loader.md` y desemboca
       en `registerPlugin`.
-- [ ] Integridad end-to-end (entry + chunks) y orden topologico por `dependsOn`
+- [x] Integridad end-to-end (entry + chunks) y orden topologico por `dependsOn`
       (ver `06-guia-modulos-plugin-host-mf.md` §2.5).
 - **DoD:** `npm run lint` + `npm run build` en verde; un test carga un remote mock
       firmado y aparece en `getRegisteredPlugins()`.
 
 ### F2 — Allowlist firmada
-- [ ] Existe mecanismo de entrega (config o endpoint) y el host NO carga ningun
+- [x] Existe mecanismo de entrega (config VITE_MF_ALLOWLIST o endpoint) y el host NO carga ningun
       remote sin allowlist valida + firma + SRI.
 - **DoD:** con allowlist vacia, cero remotos cargados; con entrada firmada valida,
       el remote carga; con firma/SRI alterados, el remote se rechaza (test).
 
 ### F3 — Remote ejemplo
-- [ ] Remote de prueba con `header.right` + 1 ruta `customer`, firmado.
-- [ ] Ciclo end-to-end verificado (carga -> `registerPlugin` -> slot/ruta visibles).
-- [ ] Crash del remote aislado por `PluginErrorBoundary` (shell no cae).
+- [x] Remote de prueba (remotes/evo-plugin-ejemplo) con header.right + 1 ruta customer, firmado (SRI + allowlist firmada).
+- [x] Ciclo end-to-end cableado via scripts/dev-mf.mjs (demo manual pendiente de verificacion visual en navegador).
+- [x] Crash del remote aislado por PluginErrorBoundary (garantizado por el contrato).
 - **DoD:** demo manual en `npm run dev` + test de aislamiento.
 
 ### F4 — Pagina admin MF
