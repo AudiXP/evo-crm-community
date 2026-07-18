@@ -40,7 +40,7 @@ en commit posterior de `main` del padre (push a `origin/main`).
 - **Fase 2 (Allowlist firmada): COMPLETA** - verifySignedAllowlist / loadSignedAllowlist / bootstrapRemoteLoader; medio de entrega VITE_MF_ALLOWLIST (config o endpoint); feature-flag: cero remotos sin allowlist valida + firma.
 - **Fase 3 (Remote ejemplo): COMPLETA** - remote de ejemplo en remotes/evo-plugin-ejemplo (header.right + ruta customer), firmado (SRI + allowlist firmada), script de firma (sign-mf-allowlist.mjs) y demo dev (dev-mf.mjs). Test de seguridad 8/8 (firma/SRI alterados -> rechazo).
 - **Fase 4 (Pagina admin MF): COMPLETA** - /admin/mis-modulos lista in-tree y remotos con badge origen/firma/url/version + grafo dependsOn; UI @evoapi/design-system; acceso ACCOUNT_OWNER; v1 solo lectura.
-- **Fase 5 en adelante: PENDIENTE** (ver abajo).
+- **Fase 5 en adelante: PENDIENTE** (ver abajo). Ver también `15-cumplimiento-restricciones-mf.md` (checklist R1–R6 aplicable a F5+).
 
 ## Decisiones de implementación (F0 + F1)
 
@@ -75,9 +75,37 @@ en commit posterior de `main` del padre (push a `origin/main`).
 - `vite build`: `✓ built` (host con plugin federation; `remoteEntry` generado).
 - `npm install`: `@module-federation/vite@1.18.2` resuelto.
 
+## Estrategia de ramas para F5 (ejemplo base + instancia privada)
+
+Acordado (sesión 2026-07-18): F5 se aborda con un esquema híbrido para que el
+caso real sirva también de plantilla reutilizable.
+
+- **`feature/arquitectura-plugins-mf` (rama base, compartible):** contiene la
+  **F5 como ejemplo**. Se migra `RegistrarPagoExtension` a un remote de
+  referencia `remotes/evo-plugin-ejemplo-boton-registrar-pago/` que muestra el
+  patrón `MessageInput.tsx` → inyección por slot (caso real que el mock F3 no
+  cubría). Otros dev lo usan de plantilla. Cumple R1–R6
+  (`15-cumplimiento-restricciones-mf.md`).
+- **`feature/plugin-registrar-pago` (rama privada AudiXP, derivada de la base):**
+  contiene la **instancia real** del botón con la lógica de negocio específica
+  (endpoint, marca, reglas del CRM AudiXP). No contamina la base compartible.
+
+Nombre aclaratorio: la carpeta del ejemplo en la base es
+`remotes/evo-plugin-ejemplo-boton-registrar-pago` (prefijo `evo-plugin-ejemplo-`
+para mantener el patrón de nomenclatura de `remotes/evo-plugin-ejemplo` y dejar
+claro que es un remote de ejemplo, no la instancia real). La rama privada
+`feature/plugin-registrar-pago` es distinta (rama vs carpeta son espacios
+distintos de git; sin colisión). La bitácora debe dejar escrito siempre que la
+base = ejemplo y la rama = instancia real.
+
+Ver también `00-estrategia-ramas-mf.md` (patrón "rama base = infra + ejemplos;
+rama derivada privada = instancia específica").
+
 ## Pendiente (Fase 4 en adelante, no hecha aún)
 
 - F5: migrar `RegistrarPagoExtension` a remote MF.
+  - Base `feature/arquitectura-plugins-mf`: remote ejemplo `remotes/registrar-pago-ejemplo/`.
+  - Rama privada `feature/plugin-registrar-pago`: instancia real AudiXP (derivada de la base).
 - F6: deploy Docker Swarm + allowlist firmada al contenedor (`13-deploy-mf.md`).
 - F7: plugin de sonda de actualizaciones upstream.
 

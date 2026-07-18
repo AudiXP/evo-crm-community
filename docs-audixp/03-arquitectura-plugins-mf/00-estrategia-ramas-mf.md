@@ -37,6 +37,27 @@ mas dentro de `src/extensions/`.
    - Se despliega como `remoteEntry.js` firmado; su URL/version entra en la
      allowlist firmada del host.
 
+### Patrón híbrido: rama base (ejemplo) + rama derivada privada
+
+Para casos reales que además deben servir de plantilla reutilizable (ej. F5 =
+`RegistrarPagoExtension`):
+
+- **Rama base `feature/arquitectura-plugins-mf`** = infra + **ejemplo**: contiene
+  el remote de referencia (ej. `remotes/evo-plugin-ejemplo-boton-registrar-pago/`)
+  que muestra el patrón de migración real. Es compartible y estable (se puede pintear).
+- **Rama derivada privada `feature/plugin-<nombre>`** (ej.
+  `feature/plugin-registrar-pago`) = instancia específica del negocio (endpoint,
+  marca, reglas del CRM). Nace desde la rama base ya validada. No se comparte.
+- La carpeta del ejemplo en la base lleva prefijo `evo-plugin-ejemplo-` (ej.
+  `evo-plugin-ejemplo-boton-registrar-pago`) para mantener el patrón de
+  nomenclatura y dejar claro que es un remote de ejemplo, no la instancia real.
+  La rama privada usa nombre distinto (ej. `feature/plugin-registrar-pago`);
+  rama vs carpeta son espacios distintos de git, sin colisión.
+- Toda fase en cualquiera de las dos ramas debe cumplir R1–R6
+  (`15-cumplimiento-restricciones-mf.md`).
+
+Ver bitácora `14-bitacora-mf.md` §"Estrategia de ramas para F5".
+
 ## Regla de pin (Swarm) — revisada para MF
 
 - El commit del submodulo host usado por el stack Swarm debe ser uno ya validado

@@ -35,6 +35,10 @@ Leyenda: [ ] pendiente - [~] parcial - [x] hecho
 ## Fase 5 — Caso real (Registrar Pago)
 - [ ] 5.1 Migrar `RegistrarPagoExtension` a remote MF (caso `07-casos-de-uso-crm.md`).
 - [ ] 5.2 Quitar la edicion manual a `MessageInput.tsx`; inyectar via slot.
+- [ ] 5.3 El ejemplo vive en la rama base `feature/arquitectura-plugins-mf` como
+      `remotes/evo-plugin-ejemplo-boton-registrar-pago/` (remote de referencia que
+      muestra el patron `MessageInput.tsx` -> inyeccion por slot). La instancia real
+      AudiXP vive en la rama privada derivada `feature/plugin-registrar-pago`.
 
 ## Fase 6 — Documentacion y deploy
 - [ ] 6.1 Completar `03-arquitectura-plugins-mf/` (esta carpeta).
@@ -95,7 +99,11 @@ este roadmap en el plan de implementacion ejecutable (no solo hoja de ruta).
 ### F5 — Caso real (Registrar Pago)
 - [ ] `RegistrarPagoExtension` migrado a remote MF; `MessageInput.tsx` ya no lo edita
       manualmente.
-- **DoD:** el boton funciona como remote; build en verde; comportamiento igual a hoy.
+- [ ] El ejemplo de referencia es `remotes/evo-plugin-ejemplo-boton-registrar-pago/`
+      (rama base `feature/arquitectura-plugins-mf`); la instancia real en la rama
+      privada `feature/plugin-registrar-pago`.
+- **DoD:** el boton funciona como remote; build en verde; comportamiento igual a hoy;
+      cumple R1–R6 (`15-cumplimiento-restricciones-mf.md`).
 
 ### F6 — Documentacion y deploy
 - [ ] Esta carpeta MF completa y `00-INDICE.md` actualizado.
